@@ -26,8 +26,8 @@ class Config:
 
         # Image Preprocess
         # size to resize the smallest side of the image
-        self.im_size = [960, 720]
-
+        self.resize_size = [720, 960]
+        self.origin_size = [480, 640]
         # Train
         # batch size
         self.batch_size = 1
@@ -44,5 +44,5 @@ class Config:
 
         # Image numbers
         self.test_images = 4025
-        self.train_images = 4250
+        self.train_images = 1440
 
