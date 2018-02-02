@@ -18,8 +18,8 @@ def get_anchor_one_layer(img_shape,  sizes,
     x = np.expand_dims(x, axis=-1)
 
     # Compute relative height and width.
-    h = np.array(sizes)
-    w = np.array(sizes)
+    h = (np.array(sizes)).astype(dtype)
+    w = (np.array(sizes)).astype(dtype)
 
     h = h * ratios[0][1]
     w = w * ratios[0][0]
