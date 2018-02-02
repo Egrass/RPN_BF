@@ -4,7 +4,7 @@ import tensorflow as tf
 import numpy as np
 
 
-def rpn_encode_one_layer(labels, bboxes, anchors, ignore_threshold, prior_scaling, dtype=tf.float32):
+def rpn_encode_one_layer(labels, bboxes, anchors, prior_scaling, dtype=tf.float32):
     """Encode groundtruth labels and bounding boxes using rpn anchors from
     one layer.
 
@@ -42,6 +42,8 @@ def rpn_encode_one_layer(labels, bboxes, anchors, ignore_threshold, prior_scalin
     def jaccard_with_anchors(bbox):
         """Compute jaccard score between a box and the anchors.
         """
+
+        a = bbox[0]
         int_ymin = tf.maximum(ymin, bbox[0])
         int_xmin = tf.maximum(xmin, bbox[1])
         int_ymax = tf.minimum(ymax, bbox[2])
