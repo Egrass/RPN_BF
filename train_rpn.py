@@ -135,7 +135,7 @@ def train(C):
                                                          'object/bbox'])
 
         # Preprocess image, labels and bboxes
-        image, glabels, gbboxes = preprocess.preprocess_for_train(image, glabels, gbboxes, C.resize_size, data_format='NCHW')
+        image, glabels, gbboxes = preprocess.preprocess_for_train(image, glabels, gbboxes, C.resize_size, data_format='NHWC')
 
         # Encode groundtruth labels and bboxes
         gclasses, glocalisations, gscores, max_match = encode.rpn_encode_one_layer(glabels, gbboxes, rpn_anchors, C.prior_scaling)

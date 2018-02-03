@@ -4,7 +4,7 @@ import os
 
 
 def get_split(dataset_dir, train_images, test_images,
-              file_pattern='caltech_%03d.tfrecord', reader=None, num_classes=2):
+              file_pattern='caltech_000.tfrecord', reader=None, num_classes=2):
     """Gets a dataset tuple with instructions for reading Pascal VOC dataset.
     """
     file_pattern = os.path.join(dataset_dir, file_pattern)

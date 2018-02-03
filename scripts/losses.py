@@ -101,6 +101,7 @@ def rpn_losses(logits, localisations, gclasses, glocalisations, gscores, max_mat
         with tf.name_scope('cross_entropy_pos'):
             loss = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=plogits,
                                                                   labels=pgclasses)
+            a = loss * pmask
             cross_entropy_pos = tf.div(tf.reduce_sum(loss * pmask), batch_size, name='value')
             tf.losses.add_loss(cross_entropy_pos)
 

@@ -151,7 +151,7 @@ def random_flip_left_right(image, bboxes, seed=None):
     return fix_image_flip_shape(image, result), bboxes
 
 
-def preprocess_for_train(image, labels, bboxes, outshape, data_format='NCHW', scope='rpn_preprocess_train'):
+def preprocess_for_train(image, labels, bboxes, outshape, data_format='NHWC', scope='rpn_preprocess_train'):
     """Preprocesses the given image for training.
     """
     fast_mode = False

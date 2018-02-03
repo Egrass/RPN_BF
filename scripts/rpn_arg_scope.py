@@ -2,7 +2,7 @@ import tensorflow as tf
 import tensorflow.contrib.slim as slim
 from scripts import custom_layers
 
-def rpn_arg_scope(weight_decay=0.0005, data_format='NCHW'):
+def rpn_arg_scope(weight_decay=0.0005, data_format='NHWC'):
     """Defines the VGG arg scope.
 
     Args:
