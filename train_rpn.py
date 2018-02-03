@@ -46,7 +46,7 @@ def tower_loss(C, scope, images, gclasses, glocalisations, gscores, max_match):
     """
 
     # Build inference Graph.
-    logits, localisations = net.rpn_net(images, C)
+    localisations, logits = net.rpn_net(images, C)
 
     # Build the portion of the Graph calculating the losses. Note that we will
     # assemble the total_loss using a custom function below.
