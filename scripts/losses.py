@@ -129,4 +129,4 @@ def rpn_losses(logits, localisations, gclasses, glocalisations, gscores, max_mat
             tf.add_to_collection('losses', regularization_loss)
 
 
-        return tf.add_n(tf.get_collection('losses'), name='total_loss')
+        return cross_entropy_pos, cross_entropy_neg, localization, regularization_loss

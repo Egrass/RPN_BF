@@ -50,7 +50,7 @@ def tower_loss(C, scope, images, gclasses, glocalisations, gscores, max_match):
 
     # Build the portion of the Graph calculating the losses. Note that we will
     # assemble the total_loss using a custom function below.
-    _ = losses.rpn_losses(logits, localisations, gclasses, glocalisations, gscores, max_match,
+    cross_entropy_pos, cross_entropy_neg, localization, regularization_loss = losses.rpn_losses(logits, localisations, gclasses, glocalisations, gscores, max_match,
                C.gt_p, C.gt_ng, C.num_classes, C.batch_size, C.negative_ratio, C.n_picture, C.lamb)
 
     # Assemble all of the losses for the current tower only.
@@ -65,7 +65,7 @@ def tower_loss(C, scope, images, gclasses, glocalisations, gscores, max_match):
         loss_name = l.op.name
         tf.summary.scalar(loss_name, l)
 
-    return total_loss
+    return total_loss, cross_entropy_pos, cross_entropy_neg, localization, regularization_loss
 
 
 def average_gradients(tower_grads):
@@ -179,7 +179,7 @@ def train(C):
                         )
 
                         # Construct network
-                        loss = tower_loss(C, scope, images, gclasses, glocalisations, gscores, max_match)
+                        loss, cross_entropy_pos, cross_entropy_neg, localization, regularization_loss = tower_loss(C, scope, images, gclasses, glocalisations, gscores, max_match)
 
                         # Reuse  variables for the next tower
                         tf.get_variable_scope().reuse_variables()
@@ -238,13 +238,14 @@ def train(C):
         summary_writer = tf.summary.FileWriter(C.train_dir, sess.graph)
 
         for step in xrange(C.max_steps):
-            _, loss_value = sess.run([train_op, loss])
+            _, loss_value, cross_entropy_pos, cross_entropy_neg, localization, regularization_loss = sess.run([train_op, loss, cross_entropy_pos, cross_entropy_neg, localization, regularization_loss])
 
             assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
             if step % 10 == 0:
-                format_str = ('%s: step %d, loss = %.2f')
-                print(format_str % (datetime.now(), step, loss_value))
+                format_str = ('%s: step %d, loss = %.2f , pos = %.2f, neg = %.2f, loc = %.2f, reg = %.2f')
+                print(format_str % (datetime.now(), step, loss_value, cross_entropy_pos, cross_entropy_neg, localization, regularization_loss))
+
 
             if step % 100 == 0:
                 summary_str = sess.run(summary_op)
