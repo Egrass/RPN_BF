@@ -80,6 +80,7 @@ def rpn_encode_one_layer(labels, bboxes, anchors, prior_scaling, dtype=tf.float3
         mask = tf.greater(jaccard, feat_scores)
         mask = tf.logical_and(mask, feat_scores > -0.5)
         mask = tf.logical_and(mask, label < 2)
+        mask = tf.logical_or(mask, max_match)
         imask = tf.cast(mask, tf.int64)
         fmask = tf.cast(mask, dtype)
 
