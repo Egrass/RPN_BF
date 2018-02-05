@@ -68,14 +68,6 @@ def rpn_losses(logits, localisations, gclasses, glocalisations, gscores, max_mat
         fpmask = tf.cast(pmask, dtype)
         all_positive = tf.reduce_sum(fpmask)
 
-        # Compute localization loss
-        with tf.name_scope('localization'):
-            loss = utils.abs_smooth(localisations - glocalisations)
-            loss = tf.reduce_sum(loss, axis=1)
-            localization = tf.div(tf.reduce_sum(loss * fpmask), tf.cast(num_anchor_position, tf.float32), name='value')
-            lamb = tf.cast(lamb, tf.float32)
-            localization = localization * lamb
-            tf.add_to_collection('losses', localization)
 
         # Compute negative matching mask
         nmask = tf.logical_and(tf.logical_not(pmask), gscores > -0.5)
@@ -127,6 +119,14 @@ def rpn_losses(logits, localisations, gclasses, glocalisations, gscores, max_mat
             cross_entropy_neg = tf.div(tf.reduce_sum(loss * nmask), n_picture, name='value')
             tf.add_to_collection('losses', cross_entropy_neg)
 
+        # Compute localization loss
+        with tf.name_scope('localization'):
+            loss = utils.abs_smooth(plocalisations - pglocalisations)
+            loss = tf.reduce_sum(loss, axis=1)
+            localization = tf.div(tf.reduce_sum(loss * pmask), tf.cast(num_anchor_position, tf.float32), name='value')
+            lamb = tf.cast(lamb, tf.float32)
+            localization = localization * lamb
+            tf.add_to_collection('losses', localization)
 
         with tf.name_scope('regularization_loss'):
             regularization_loss = tf.add_n(slim.losses.get_regularization_losses())
