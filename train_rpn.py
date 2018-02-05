@@ -54,12 +54,12 @@ def tower_loss(C, scope, images, gclasses, glocalisations, gscores, max_match):
                C.gt_p, C.gt_ng, C.num_classes, C.batch_size, C.negative_ratio, C.n_picture, C.lamb)
 
     # Assemble all of the losses for the current tower only.
-    losses = tf.get_collection('losses', scope)
+    all_lose = tf.get_collection('losses', scope)
 
     # Calculate the total loss for the current tower.
-    total_loss = tf.add_n(losses, name='total_loss')
+    total_loss = tf.add_n(all_lose, name='total_loss')
 
-    for l in losses + [total_loss]:
+    for l in all_lose + [total_loss]:
         # Remove 'tower_[0-9]/' from the name in case this is a multi-GPU training
         # session. This helps the clarity of presentation on tensorboard.
         loss_name = l.op.name
