@@ -238,13 +238,14 @@ def train(C):
         summary_writer = tf.summary.FileWriter(C.train_dir, sess.graph)
 
         for step in xrange(C.max_steps):
-            _, loss_value, cross_entropy_pos, cross_entropy_neg, localization, regularization_loss = sess.run([train_op, loss, cross_entropy_pos, cross_entropy_neg, localization, regularization_loss])
+            _, loss_value, pos_value, neg_value, loc_value, reg_value = \
+                sess.run([train_op, loss, cross_entropy_pos, cross_entropy_neg, localization, regularization_loss])
 
             assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
             if step % 10 == 0:
                 format_str = ('%s: step %d, loss = %.2f , pos = %.2f, neg = %.2f, loc = %.2f, reg = %.2f')
-                print(format_str % (datetime.now(), step, loss_value, cross_entropy_pos, cross_entropy_neg, localization, regularization_loss))
+                print(format_str % (datetime.now(), step, loss_value, pos_value, neg_value, loc_value, reg_value))
 
 
             if step % 100 == 0:
