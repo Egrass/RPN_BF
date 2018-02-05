@@ -51,7 +51,7 @@ def tower_loss(C, scope, images, gclasses, glocalisations, gscores, max_match):
     # Build the portion of the Graph calculating the losses. Note that we will
     # assemble the total_loss using a custom function below.
     cross_entropy_pos, cross_entropy_neg, localization, regularization_loss = losses.rpn_losses(logits, localisations, gclasses, glocalisations, gscores, max_match,
-               C.gt_p, C.gt_ng, C.num_classes, C.batch_size, C.negative_ratio, C.n_picture, C.lamb)
+               C.gt_p, C.gt_ng, C.num_classes, C.batch_size, C.negative_ratio, C.n_picture, C.lamb, C.num_anchor_position)
 
     # Assemble all of the losses for the current tower only.
     all_lose = tf.get_collection('losses', scope)

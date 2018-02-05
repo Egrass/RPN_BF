@@ -33,7 +33,8 @@ def creat_mask(true_num, N, dtype):
 
 
 def rpn_losses(logits, localisations, gclasses, glocalisations, gscores, max_match,
-               max_threshold, min_threshold, num_classes, batch_size, negative_ratio, n_picture, lamb, scope='rpn_losses'):
+               max_threshold, min_threshold, num_classes, batch_size, negative_ratio, n_picture, lamb,
+               num_anchor_position, scope='rpn_losses'):
 
     with tf.name_scope(scope, 'rpn_losses'):
 
@@ -60,6 +61,15 @@ def rpn_losses(logits, localisations, gclasses, glocalisations, gscores, max_mat
         glocalisations = tf.concat(fglocalisations, axis=0)
         max_match = tf.concat(fmax_match, axis=0)
         dtype = logits.dtype
+
+        # Compute localization loss
+        with tf.name_scope('localization'):
+            loss = utils.abs_smooth(localisations - glocalisations)
+            loss = tf.reduce_sum(loss, axis=1)
+            localization = tf.div(tf.reduce_sum(loss * logits[:, 1]), tf.cast(num_anchor_position, tf.float32), name='value')
+            lamb = tf.cast(lamb, tf.float32)
+            localization = localization * lamb
+            tf.add_to_collection('losses', localization)
 
         # Compute positive matching mask
         pmask = gscores > max_threshold
@@ -106,23 +116,17 @@ def rpn_losses(logits, localisations, gclasses, glocalisations, gscores, max_mat
         with tf.name_scope('cross_entropy_pos'):
             loss = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=plogits,
                                                                   labels=pgclasses)
+            a = loss * pmask
             cross_entropy_pos = tf.div(tf.reduce_sum(loss * pmask), n_picture, name='value')
             tf.add_to_collection('losses', cross_entropy_pos)
 
         with tf.name_scope('cross_entropy_neg'):
             loss = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=nlogits,
                                                                   labels=ngclasses)
+            a = loss * nmask
             cross_entropy_neg = tf.div(tf.reduce_sum(loss * nmask), n_picture, name='value')
             tf.add_to_collection('losses', cross_entropy_neg)
 
-        with tf.name_scope('localization'):
-            # Weights Tensor
-            loss = utils.abs_smooth(plocalisations - pglocalisations)
-            loss = tf.reduce_sum(loss, axis=1)
-            localization = tf.div(tf.reduce_sum(loss * pmask), tf.cast(n_positive, tf.float32), name='value')
-            lamb = tf.cast(lamb, tf.float32)
-            localization = localization * lamb
-            tf.add_to_collection('losses', localization)
 
         with tf.name_scope('regularization_loss'):
             regularization_loss = tf.add_n(slim.losses.get_regularization_losses())
