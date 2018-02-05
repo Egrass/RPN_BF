@@ -119,8 +119,8 @@ def rpn_losses(logits, localisations, gclasses, glocalisations, gscores, max_mat
             # Weights Tensor
             loss = utils.abs_smooth(plocalisations - pglocalisations)
             loss = tf.reduce_sum(loss, axis=1)
-            localization = tf.div(tf.reduce_sum(loss * pmask), n_positive, name='value')
-            lamb = tf.cast(lamb, dtype)
+            localization = tf.div(tf.reduce_sum(loss * pmask), tf.cast(n_positive, tf.float32), name='value')
+            lamb = tf.cast(lamb, tf.float32)
             localization = localization * lamb
             tf.add_to_collection('losses', localization)
 
