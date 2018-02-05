@@ -4,7 +4,7 @@ import math
 class Config:
     def __init__(self):
         # GPU
-        self.gpu_nums = 1
+        self.gpu_nums = 4
 
         # Anchor
         # anchor box scales

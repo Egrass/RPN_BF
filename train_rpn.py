@@ -159,8 +159,8 @@ def train(C):
         tower_grads = []
         with tf.variable_scope(tf.get_variable_scope()):
             for i in xrange(C.gpu_nums):
-                #with tf.device('/gpu:%d' % i):
-                with tf.device('/cpu'):
+                with tf.device('/gpu:%d' % i):
+                #with tf.device('/cpu'):
                     with tf.name_scope('tower_%d' % i) as scope:
                         # Dequeue one batch for the GPU
                         images, gclasses, glocalisations, gscores, max_match = utils.reshape_list(
@@ -240,8 +240,8 @@ def train(C):
                 summary_writer.add_summary(summary_str, step)
 
                 # Save the model checkpoint periodically.
-            if step % 1000 == 0 or (step + 1) == FLAGS.max_steps:
-                checkpoint_path = os.path.join(FLAGS.train_dir, 'model.ckpt')
+            if step % 1000 == 0 or (step + 1) == C.max_steps:
+                checkpoint_path = os.path.join(C.train_dir, 'model.ckpt')
                 saver.save(sess, checkpoint_path, global_step=step)
 
 
