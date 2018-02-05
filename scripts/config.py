@@ -44,7 +44,7 @@ class Config:
         # number of anchors for loss calculation
         self.n_picture = 120
         # weight term of regression loss
-        self.lamb = 10.
+        self.lamb = 20.
         # number of anchor position
         self.num_anchor_position = 2700
 

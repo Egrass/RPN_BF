@@ -244,7 +244,7 @@ def train(C):
             assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
             if step % 10 == 0:
-                format_str = ('%s: step %d, loss = %.2f , pos = %.2f, neg = %.2f, loc = %.2f, reg = %.2f')
+                format_str = ('%s: step %d, loss = %.2f , pos = %.4f, neg = %.4f, loc = %.4f, reg = %.4f')
                 print(format_str % (datetime.now(), step, loss_value, pos_value, neg_value, loc_value, reg_value))
 
 
