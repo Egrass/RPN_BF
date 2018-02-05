@@ -41,6 +41,12 @@ class Config:
         self.learning_rate = [[0, 0.001], [60000, 0.0001]] # it means during the 0~60k mini-batches, learning rate is 0.001 and during the last 20k min-batches, learning rate is 0.0001
         # momentum
         self.momentum = 0.9
+        # ratio of positive and negative
+        self.negative_ratio = 5.
+        # number of anchors for loss calculation
+        self.n_picture = 120
+        # weight term of regression loss
+        self.lamb = 10.
 
         # Image numbers
         self.test_images = 4025

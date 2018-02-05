@@ -50,11 +50,22 @@ def tower_loss(C, scope, images, gclasses, glocalisations, gscores, max_match):
 
     # Build the portion of the Graph calculating the losses. Note that we will
     # assemble the total_loss using a custom function below.
-    loss = losses.rpn_losses(logits, localisations, gclasses, glocalisations, gscores, max_match,
-               C.gt_p, C.gt_ng, C.num_classes, C.batch_size)
+    _ = losses.rpn_losses(logits, localisations, gclasses, glocalisations, gscores, max_match,
+               C.gt_p, C.gt_ng, C.num_classes, C.batch_size, C.negative_ratio, C.n_picture, C.lamb)
 
+    # Assemble all of the losses for the current tower only.
+    losses = tf.get_collection('losses', scope)
 
-    return loss
+    # Calculate the total loss for the current tower.
+    total_loss = tf.add_n(losses, name='total_loss')
+
+    for l in losses + [total_loss]:
+        # Remove 'tower_[0-9]/' from the name in case this is a multi-GPU training
+        # session. This helps the clarity of presentation on tensorboard.
+        loss_name = l.op.name
+        tf.summary.scalar(loss_name, l)
+
+    return total_loss
 
 
 def average_gradients(tower_grads):
