@@ -62,20 +62,20 @@ def rpn_losses(logits, localisations, gclasses, glocalisations, gscores, max_mat
         max_match = tf.concat(fmax_match, axis=0)
         dtype = logits.dtype
 
-        # Compute localization loss
-        with tf.name_scope('localization'):
-            loss = utils.abs_smooth(localisations - glocalisations)
-            loss = tf.reduce_sum(loss, axis=1)
-            localization = tf.div(tf.reduce_sum(loss * logits[:, 1]), tf.cast(num_anchor_position, tf.float32), name='value')
-            lamb = tf.cast(lamb, tf.float32)
-            localization = localization * lamb
-            tf.add_to_collection('losses', localization)
-
         # Compute positive matching mask
         pmask = gscores > max_threshold
         pmask = tf.logical_or(pmask, max_match)
         fpmask = tf.cast(pmask, dtype)
         all_positive = tf.reduce_sum(fpmask)
+
+        # Compute localization loss
+        with tf.name_scope('localization'):
+            loss = utils.abs_smooth(localisations - glocalisations)
+            loss = tf.reduce_sum(loss, axis=1)
+            localization = tf.div(tf.reduce_sum(loss * fpmask), tf.cast(num_anchor_position, tf.float32), name='value')
+            lamb = tf.cast(lamb, tf.float32)
+            localization = localization * lamb
+            tf.add_to_collection('losses', localization)
 
         # Compute negative matching mask
         nmask = tf.logical_and(tf.logical_not(pmask), gscores > -0.5)
