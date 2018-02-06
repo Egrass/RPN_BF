@@ -29,6 +29,8 @@ tf.app.flags.DEFINE_string('train_dir', './log',
                            """and checkpoint.""")
 tf.app.flags.DEFINE_string('dataset_dir', './tfrecord',
                            """Directory where to find data""")
+tf.app.flags.DEFINE_string('model_path', 'vgg_16.ckpt',
+                           """Directory where to find model for fine-tune""")
 tf.app.flags.DEFINE_boolean('log_device_placement', False,
                             """Whether to log device placement.""")
 
@@ -234,8 +236,13 @@ def train(C):
 
         # Start the queue runners
         tf.train.start_queue_runners(sess=sess)
-
         summary_writer = tf.summary.FileWriter(C.train_dir, sess.graph)
+
+        # Fine-tune
+        if C.model_path:
+            variables_to_restore = slim.get_variables_to_restore(exclude=["vgg_16/rpn/"])
+            init_assign_op, init_feed_dict = slim.assign_from_checkpoint("vgg_16.ckpt", variables_to_restore)
+            sess.run(init_assign_op, init_feed_dict)
 
         for step in xrange(C.max_steps):
             _, loss_value, pos_value, neg_value, loc_value, reg_value = \
@@ -265,6 +272,7 @@ def main(argv=None):  # pylint: disable=unused-argument
     C = config.Config()
     C.dataset_dir = FLAGS.dataset_dir
     C.train_dir = FLAGS.train_dir
+    C.model_path = FLAGS.model_path
     train(C)
 
 

@@ -4,13 +4,13 @@ import tensorflow.contrib.slim as slim
 from scripts import rpn_arg_scope
 
 
-def rpn_net(inputs, C, if_training=True, scope='rpn_net'):
+def rpn_net(inputs, C, if_training=True, scope='vgg_16'):
     num_anchors = len(C.anchor_box_ratios) * len(C.anchor_box_scales)
     end_points = {}
 
     arg_scope = rpn_arg_scope.rpn_arg_scope(weight_decay=C.weight_decay)
     with slim.arg_scope(arg_scope):
-        with tf.variable_scope(scope, 'rpn_net', [inputs], reuse=None):
+        with tf.variable_scope(scope, 'vgg_16', [inputs], reuse=None):
             # VGG-16 blocks
             # block1
             net = slim.repeat(inputs, 2, slim.conv2d, 64, [3, 3], scope='conv1')
