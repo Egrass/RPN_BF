@@ -239,9 +239,9 @@ def train(C):
         summary_writer = tf.summary.FileWriter(C.train_dir, sess.graph)
 
         # Fine-tune
-        if C.model_path:
-            variables_to_restore = slim.get_variables_to_restore(exclude=["vgg_16/rpn/"])
-            init_assign_op, init_feed_dict = slim.assign_from_checkpoint("vgg_16.ckpt", variables_to_restore)
+        #if C.model_path:
+            #variables_to_restore = slim.get_variables_to_restore(exclude=["vgg_16/rpn/"])
+            #init_assign_op, init_feed_dict = slim.assign_from_checkpoint("vgg_16.ckpt", variables_to_restore)
             #sess.run(init_assign_op, init_feed_dict)
 
         for step in xrange(C.max_steps):
