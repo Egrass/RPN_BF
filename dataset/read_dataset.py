@@ -4,10 +4,9 @@ import os
 
 
 def get_split(dataset_dir, train_images, test_images,
-              file_pattern='caltech_000.tfrecord', reader=None, num_classes=2):
+              file_pattern=None, reader=None, num_classes=2):
     """Gets a dataset tuple with instructions for reading Pascal VOC dataset.
     """
-    file_pattern = os.path.join(dataset_dir, file_pattern)
 
     # Allowing None in the signature so that dataset_factory can use the default.
     if reader is None:
@@ -52,6 +51,15 @@ def get_split(dataset_dir, train_images, test_images,
         'object/bbox': 'A list of bounding boxes, one per each object.',
         'object/label': 'A list of labels, one per each object.',
     }
+
+    if file_pattern == None:
+        file_pattern = []
+        file_list = os.listdir(dataset_dir)
+        for file in file_list:
+            path = os.path.join(dataset_dir, file)
+            file_pattern.append(path)
+    else:
+        file_pattern = os.path.join(dataset_dir, file_pattern)
 
     return slim.dataset.Dataset(
         data_sources=file_pattern,
