@@ -130,7 +130,7 @@ def rpn_losses(logits, localisations, gclasses, glocalisations, gscores, max_mat
 
         with tf.name_scope('regularization_loss'):
             regularization_loss = tf.add_n(slim.losses.get_regularization_losses())
-            tf.add_to_collection('losses', regularization_loss)
+            # tf.add_to_collection('losses', regularization_loss)
 
 
         return cross_entropy_pos, cross_entropy_neg, localization, regularization_loss
