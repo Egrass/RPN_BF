@@ -182,3 +182,27 @@ def preprocess_for_train(image, labels, bboxes, outshape, data_format='NHWC', sc
             image = tf.transpose(image, perm=(2, 0, 1))
 
         return image, labels, bboxes
+
+
+def preprocess_for_test(image, labels, bboxes, outshape, data_format='NHWC', scope='rpn_preprocess_test'):
+    """Preprocesses the given image for training.
+    """
+    fast_mode = False
+    with tf.name_scope(scope, 'rpn_preprocess_train', [image, labels, bboxes]):
+        if image.get_shape().ndims != 3:
+            raise ValueError('Input must be of size [height, width, C>0]')
+        # Convert to float scaled [0, 1].
+        if image.dtype != tf.float32:
+            image = tf.image.convert_image_dtype(image, dtype=tf.float32)
+
+        # Distort image and bounding boxes
+        dst_image = tf.image.resize_images(image, outshape)
+
+        # Rescale to VGG input scale.
+        image = dst_image * 255.
+        image = tf_image_whitened(image, [_R_MEAN, _G_MEAN, _B_MEAN])
+        # Image data format.
+        if data_format == 'NCHW':
+            image = tf.transpose(image, perm=(2, 0, 1))
+
+        return image, labels, bboxes
