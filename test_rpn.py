@@ -83,35 +83,37 @@ def evaluate(C):
                 print('No checkpoint file found')
                 return
 
+            shape = sess.run(shape)
+            print(shape)
             # Start the queue runners.
-            coord = tf.train.Coordinator()
-            try:
-                threads = []
-                for qr in tf.get_collection(tf.GraphKeys.QUEUE_RUNNERS):
-                    threads.extend(qr.create_threads(sess, coord=coord, daemon=True,
-                                                     start=True))
-
-                num_iter = int(math.ceil(C.test_images / C.batch_size))
-                true_count = 0  # Counts the number of correct predictions.
-                total_sample_count = num_iter * FLAGS.batch_size
-                step = 0
-                while step < num_iter and not coord.should_stop():
-                    predictions = sess.run([top_k_op])
-                    true_count += np.sum(predictions)
-                    step += 1
-                    # Write down the results
-                    #print_result(localisations, logits)
-
-                # Compute precision @ 1.
-                precision = true_count / total_sample_count
-                print('%s: precision @ 1 = %.3f' % (datetime.now(), precision))
-
-
-            except Exception as e:  # pylint: disable=broad-except
-                coord.request_stop(e)
-
-            coord.request_stop()
-            coord.join(threads, stop_grace_period_secs=10)
+            # coord = tf.train.Coordinator()
+            # try:
+            #     threads = []
+            #     for qr in tf.get_collection(tf.GraphKeys.QUEUE_RUNNERS):
+            #         threads.extend(qr.create_threads(sess, coord=coord, daemon=True,
+            #                                          start=True))
+            #
+            #     num_iter = int(math.ceil(C.test_images / C.batch_size))
+            #     true_count = 0  # Counts the number of correct predictions.
+            #     total_sample_count = num_iter * FLAGS.batch_size
+            #     step = 0
+            #     while step < num_iter and not coord.should_stop():
+            #         predictions = sess.run([top_k_op])
+            #         true_count += np.sum(predictions)
+            #         step += 1
+            #         # Write down the results
+            #         #print_result(localisations, logits)
+            #
+            #     # Compute precision @ 1.
+            #     precision = true_count / total_sample_count
+            #     print('%s: precision @ 1 = %.3f' % (datetime.now(), precision))
+            #
+            #
+            # except Exception as e:  # pylint: disable=broad-except
+            #     coord.request_stop(e)
+            #
+            # coord.request_stop()
+            # coord.join(threads, stop_grace_period_secs=10)
 
 
 def main(argv=None):  # pylint: disable=unused-argument
